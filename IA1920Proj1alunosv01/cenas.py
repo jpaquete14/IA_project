@@ -23,41 +23,47 @@ class SearchProblem:
                 for x in list_vertice:
                     aux = self.auxheur[x[1]]
                     h = math.sqrt(pow(aux[1] - self.auxheur[init][1], 2) + pow(aux[0] - self.auxheur[init][0], 2))
-                    g = math.sqrt(pow(aux[1] - self.auxheur[self.goal[0]][1], 2) + pow(pow(aux[0] - self.auxheur[self.goal[0]][0], 2)))
+                    g = math.sqrt(pow(aux[1] - self.auxheur[self.goal[0]][1], 2) + pow(aux[0] - self.auxheur[self.goal[0]][0], 2))
                     list_aux.append((x[1], g + h))
 
                 list.append(list_aux)
                 min = list[0][0]
                 aux_x = 0
                 aux_i = 0
+                print(min[1])
                 for x in list:
                     for i in x:
                         if i[1] < min[1]:
                             min = i
                             aux_x = x
 
-                list.pop(list.index(aux_x[aux_i]))
-                self.awnser.append(min[1])
+                print(list)
+                aux_x.pop(aux_x.index(min))
+                print(list)
+                self.awnser.append(min[0])
 
-                if min[1] == goal[0]:
+                if min[1] == self.goal[0]:
                     return list
 
                 else :
                     n = list.index(aux_x)
-                    n = n + 1
+                    n = n + 2
 
-                    for j in range(len(self.awnser), n, -1)):
+                    print(self.awnser)
+
+                    for j in range(len(self.awnser), n, -1):
                         self.awnser.pop(j)
 
-                    list = A_star_Aux(init = init, vertice = min[1], list = list)
+                    print("---------Nova---------")
+                    list = A_star_Aux(self = self, init = init, vertice = min[0], list = list)
                     return list
 
         #########################################################################
             list = []
             self.awnser.append(init[0])
-            list = A_star_Aux(init = init[0], vertice = init[0], list = list)
+            list = A_star_Aux(self = self, init = init[0], vertice = init[0], list = list)
             pass
 
     #######################################################################################################################################################
-    A_star(init = init, limitexp = limitexp, limitdepth = limitdepth, tickets = tickets)
-    return self.awnser
+        A_star(self = self, init = init, limitexp = limitexp, limitdepth = limitdepth, tickets = tickets)
+        return self.awnser
