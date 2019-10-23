@@ -41,28 +41,42 @@ class SearchProblem:
 
             return answer_aux
 
-        def trata_pares(answer_i, diff, answer_aux):
+        def trata_pares(answer_i, diff, answer_aux, tickets, position_of_node):
             #basically adds to the path a adjcent node and the goal node as many times as needed until diff is 0
-            answer_length = len(answer_i)
+            first_answer_length = len(answer_i) - 1
             while diff != 0:
                 #loop going through the adjcent nodes of the goal node
-                aux = answer_i[answer_length - 1]
+                aux = answer_i[position_of_node]
                 for x in self.model[aux]:
                     #TODO Improvement: only use one function, go through list one time
                     #if the adjcent node or the goal node is already occupied
-                    if part_of_list(x[1], answer_aux[answer_length]) or part_of_list(aux, answer_aux[answer_length + 1]):
+                    if part_of_list(x[1], answer_aux[position_of_node + 1]) or part_of_list(aux, answer_aux[position_of_node + 2]):
                         continue
 
+                    if (tickets[x[0]] < 2):
+                        continue
                     #adding to the path a adjcent node and the goal node
-                    answer_i.append(x[1])
-                    answer_i.append(aux)
-                    break
+                    answer_i.insert(position_of_node + 1, x[1])
+                    answer_i.insert(position_of_node + 2, aux)
+                    #checking if answer_i after inserting the new element is in conflict with awnser_aux
+                    #if position_of_node != first_answer_length:
+                    if check(answer_i, answer_aux, position_of_node + 1):
+                        #removing from answer_aux the changed nodes from their previous time
+                        awnser_aux = fix(answer_i, answer_aux, position_of_node + 3)
+                        tickets[x[0]] = tickets[x[0]] - 2
+                        break
+
+                    else:
+                        answer_i.pop(position_of_node + 1)
+                        answer_i.pop(position_of_node + 2)
+                        tickets[x[0]] = tickets[x[0]] + 2
+                        break
 
                 diff = diff - 2
 
-            return answer_i
+            return [answer_i, tickets]
 
-        def trata_impares(answer_i, answer_aux):
+        def trata_impares(answer_i, answer_aux, tickets):
             #basically goes through the path trying to add a node to it in order to make his length even
             answer_length = len(answer_i)
             for i in range(answer_length - 2, -1, -1):
@@ -74,17 +88,22 @@ class SearchProblem:
 
                     #checking if there is any node that can be a intermediary node for two consecutive nodes of the path
                     if find_node(self.model[x[1]], answer_i[i + 1]):
+                        if (tickets[x[0]] < 1):
+                            continue
+
                         answer_i.insert(i + 1, x[1])
                         #checking if answer_i after inserting the new element is in conflict with awnser_aux
                         if check(answer_i, answer_aux, i + 1):
                             #removing from answer_aux the changed nodes from their previous time
                             awnser_aux = fix(answer_i, answer_aux, i + 2)
-                            break
+                            tickets[x[0]] = tickets[x[0]] - 1
+                            return  [answer_i, answer_aux, tickets]
 
                         else:
                             answer_i.pop(i + 1)
+                            tickets[x[0]] = tickets[x[0]] + 1
 
-            return [answer_i, answer_aux]
+            return [answer_i, answer_aux, tickets]
 
         def same_time(answer, answer_aux, tickets):
             lengths = []
@@ -113,17 +132,26 @@ class SearchProblem:
                 #if diff is even
                 if (diff % 2) == 0:
                     #calling trata_pares
-                    answer[i] = trata_pares(answer[i], diff, answer_aux)
+                    lenght_before = len(answer[i])
+                    position_of_node = len(answer[i]) - 1
+                    length_after = lenght_before
+                    while lenght_before == length_after and position_of_node >= 0:
+                        aux_par = trata_pares(answer[i], diff, answer_aux, tickets, position_of_node)
+                        position_of_node = position_of_node - 1
+                        length_after = len(aux_par[0])
 
                 else:
                     #aux is a list with 2 elements the first is the changed path and the second is answer_aux
                     #trata_impares makes the length of the path even
-                    aux = trata_impares(answer[i], answer_aux)
-                    answer_i = aux[0]
-                    answer_aux = aux[1]
+                    aux_impar = trata_impares(answer[i], answer_aux, tickets)
                     #after making the length of the path even calls trata_pares
-                    answer[i] = trata_pares(answer[i], diff - 1, answer_aux)
-
+                    lenght_before = len(answer[i])
+                    position_of_node = len(answer[i]) - 1
+                    length_after = lenght_before
+                    while lenght_before == length_after and position_of_node >= 0:
+                        aux_par = trata_pares(answer[i], diff - 1, answer_aux, tickets, position_of_node)
+                        position_of_node = position_of_node - 1
+                        length_after = len(aux_par[0])
                 #updates the answer_aux according to the path
                 answer_aux = fix_answer_aux(answer[i], answer_aux)
 
@@ -195,7 +223,7 @@ class SearchProblem:
                     return True
 
             return False
-        
+
         def print_list(lst):
             for el in lst:
                 print(el)
@@ -252,8 +280,6 @@ class SearchProblem:
 
                     open_list.append([child[1], h, current[0], current[3] + 1, child[0], new_tickets])
 
-            return invalid_path
-
     #######################################################################################################################################################
 
         answer = []                 # list where the paths will be before function same_time
@@ -269,13 +295,14 @@ class SearchProblem:
             tickets = answer_i_list[1]
             #print_list(tickets)
             #adding the path to the answer
+            #print(answer_i_list[0])
             answer.append(answer_i_list[0])
             #updating answer_aux according to path
             answer_aux = fix_answer_aux(answer_i_list[0], answer_aux)
 
         #making every path finish at the same time
         answer = same_time(answer, answer_aux, tickets)
-
+        #print(answer)
 
         cities = []                                                     #
         for x in answer:                                                #
