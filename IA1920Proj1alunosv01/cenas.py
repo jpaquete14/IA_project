@@ -86,7 +86,7 @@ class SearchProblem:
 
             return [answer_i, answer_aux]
 
-        def same_time(answer, answer_aux):
+        def same_time(answer, answer_aux, tickets):
             lengths = []
             max = 0
             max_i = 0
@@ -195,6 +195,10 @@ class SearchProblem:
                     return True
 
             return False
+        
+        def print_list(lst):
+            for el in lst:
+                print(el)
 
         def tb(lst):
             '''Receives the closed_list and does traceback returning a list with the path from the initial node to the goal'''
@@ -211,20 +215,34 @@ class SearchProblem:
 
         def A_star(self, init, tickets, i, answer_aux):
 
+            returned_list = []
             open_list = []
             closed_list = []
             h = function_h(init[i], i)
-            # 4th element of the list is the expansion order
-            open_list.append([init[i], h, -1, 0])
+            # [position, h value, father node, expansion order, transport taken, tickets left]
+            open_list.append([init[i], h, -1, 0, -1, tickets])
 
             while len(open_list) > 0:
+                new_tickets = tickets
                 current = least_h(open_list, answer_aux)
                 open_list.pop(open_list.index(current))
+
+                #check tickets
+                if(current[3] != 0):                #no need to check for the first node
+                    if(tickets[current[4]] > 0):
+                        new_tickets[current[4]] -= 1
+                    else:
+                        continue
+
                 closed_list.append(current)
 
+                #Breaking point
                 if current[0] == self.goal[i]:
-                    return tb(closed_list)
+                    returned_list.append(tb(closed_list))
+                    returned_list.append(new_tickets)
+                    return returned_list
 
+                #Check nodes children, add them to the open_list
                 for child in self.model[current[0]] :
 
                     if inList(child[1], closed_list):
@@ -232,7 +250,9 @@ class SearchProblem:
 
                     h = function_h(child[1], i)
 
-                    open_list.append([child[1], h, current[0], current[3] + 1])
+                    open_list.append([child[1], h, current[0], current[3] + 1, child[0], new_tickets])
+
+            return invalid_path
 
     #######################################################################################################################################################
 
@@ -244,14 +264,17 @@ class SearchProblem:
         init_length = len(init)
         for i in range(0, init_length, 1):
             #calculating each path according to the positions in awnser_aux
-            answer_i = A_star(self = self, init = init, tickets = tickets, i = i, answer_aux = answer_aux)
+            answer_i_list = A_star(self = self, init = init, tickets = tickets, i = i, answer_aux = answer_aux)
+            #update ticket list
+            tickets = answer_i_list[1]
+            #print_list(tickets)
             #adding the path to the answer
-            answer.append(answer_i)
+            answer.append(answer_i_list[0])
             #updating answer_aux according to path
-            answer_aux = fix_answer_aux(answer_i, answer_aux)
+            answer_aux = fix_answer_aux(answer_i_list[0], answer_aux)
 
         #making every path finish at the same time
-        answer = same_time(answer, answer_aux)
+        answer = same_time(answer, answer_aux, tickets)
 
 
         cities = []                                                     #
