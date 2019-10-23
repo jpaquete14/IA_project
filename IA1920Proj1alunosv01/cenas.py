@@ -10,7 +10,7 @@ class SearchProblem:
         self.model = model
         self.auxheur = auxheur
 
-    def search(self, init, limitexp = 2000, limitdepth = 10, tickets = [math.inf,math.inf,math.inf]):
+    def search(self, init, limitexp = 2000, limitdepth = 10, tickets = [math.inf,math.inf,math.inf], anyorder = False):
 
         def part_of_list(element, lst):
             '''Receives a integer and a list and returns True if the integer is in the list'''
