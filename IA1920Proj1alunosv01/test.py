@@ -3,7 +3,7 @@ import copy
 import matplotlib.pyplot as plt
 import time
 import math
-from cenas import SearchProblem
+from A016 import SearchProblem
 
 with open("coords.pickle", "rb") as fp:   # Unpickling
     coords = pickle.load(fp)
@@ -54,7 +54,10 @@ def validatepath(oP,oI,U,tickets=[25,25,25]):
                                 return False
                         else:
                                 mtickets[tt[0][agind]] -= 1
-
+                                #print("-------------")
+                                #print([tt[0][agind],ag])
+                                #print(U[st])
+                                #print("-------------")
                                 if [tt[0][agind],ag] in U[st]:
                                         I[agind] = ag
                                         #pass
@@ -82,7 +85,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -97,7 +100,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [5,5,2]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -112,7 +115,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -128,7 +131,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -144,7 +147,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [5,20,2]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -159,7 +162,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [5,20,2]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -167,21 +170,23 @@ else:
 # CUSTOM TESTS
 
 print("\n ENTERING CUSTOM TESTS...")
-
-'''print("\n(4 val) Exercise 4 - Three agents, Limits (test 1)")
+'''
+print("\n(4 val) Exercise 4 - Three agents, Limits (test 1)")
 print("Init [2,10,70] Goal [113, 110, 2]")
-SP = SearchProblem(goal = [113, 110, 2], model = U, auxheur=coords)
+SP = SearchProblem(goal = [2, 113, 110], model = U, auxheur=coords)
 tinit = time.process_time()
-I = [2, 10, 70]
+I = [70, 2, 10]
 nn = SP.search(I,limitexp = 3000, limitdepth = 10, tickets = [15, 10, 8])
 tend = time.process_time()
 print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [15, 10, 8]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
+
+        '''
 
 print("\n(4 val) Exercise 5 - Three agents, Limits, Any-Order (test 1)")
 print("Init [2, 10, 70] Goal [113, 110, 2]")
@@ -194,9 +199,9 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [15, 10, 8]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
-        print("invalid path")'''
+        print("invalid path")
 
 
 
@@ -211,7 +216,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [15, 10, 8]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -226,7 +231,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [15, 10, 8]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -242,7 +247,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [15, 10, 8]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 
@@ -257,7 +262,7 @@ print("%.1fms"%((tend-tinit)*1000))
 if validatepath(nn,I,U, tickets = [15, 10, 8]):
         print("path")
         print(nn)
-        plotpath(nn,coords)
+        #plotpath(nn,coords)
 else:
         print("invalid path")
 tendtotal = time.process_time()
