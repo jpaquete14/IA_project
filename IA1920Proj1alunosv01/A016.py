@@ -14,6 +14,41 @@ class SearchProblem:
 
     def search(self, init, limitexp = 2000, limitdepth = 10, tickets = [math.inf,math.inf,math.inf], anyorder = False):
 
+        def my_copy(lst):
+            new_list = []
+            for x in lst:
+                new_list.append(x.copy())
+            return new_list
+
+        def BFS(j, init, new_graph):
+            closed_list = []
+            open_list = []
+            new_graph[self.goal[j]].append(0)
+            open_list.append(self.goal[j])
+            while (len(open_list) > 0):
+
+                current = open_list.pop(0)
+
+                for elem in new_graph[current]:
+
+                    if isinstance(elem, int):
+                        continue
+
+                    if part_of_list(elem[1], closed_list):
+                        continue
+
+                    if isinstance(new_graph[elem[1]][-1], int):
+                        if new_graph[current][- 1] + 1 < new_graph[elem[1]][-1]:
+                            new_graph[elem[1]].append(new_graph[current][- 1] + 1)
+                    else:
+                        new_graph[elem[1]].append(new_graph[current][- 1] + 1)
+
+                    open_list.append(elem[1])
+
+                closed_list.append(current)
+
+            return new_graph
+
         def order(init):
             new_goal = []
             for init_i in init:
@@ -30,7 +65,6 @@ class SearchProblem:
                     i = i + 1
                 new_goal.append(new_goal_i)
             return new_goal
-
 
         def part_of_list(element, lst):
             '''Receives a integer and a list and returns True if the integer is in the list'''
@@ -194,6 +228,7 @@ class SearchProblem:
                         aux_par = trata_pares(answer[i], diff, answer_aux, tickets, position_of_node)
                         position_of_node = position_of_node - 1
                         length_after = len(aux_par[0])
+
                 else:
                     #aux is a list with 2 elements the first is the changed path and the second is answer_aux
                     #trata_impares makes the length of the path even
@@ -212,7 +247,7 @@ class SearchProblem:
             return
 
 
-        def A_star(self, init, tickets, i, answer_aux):
+        def A_star(self, init, tickets, i, answer_aux, graph):
 
             ######################################################################################
             def tb(lst):
@@ -230,12 +265,12 @@ class SearchProblem:
             def least_h(open_list, answer_aux):
                 '''Receives a list and returns the element of the list with the lowest h'''
                 min_i = 0
-                min = open_list[0][1]
+                min = math.inf
 
                 #loop going through the open_list
                 list_length = len(open_list)
                 answer_length = len(answer_aux) - 1
-                for i in range(1, list_length, 1):
+                for i in range(0, list_length, 1):
 
                     #if the answer_aux length is higher than the expansion order of the node
                     if answer_length >= open_list[i][3]:
@@ -263,9 +298,8 @@ class SearchProblem:
             returned_list = []
             open_list = []
             closed_list = []
-            h = function_h(init[i], i)
             # [position, h value, father node, expansion order, transport taken, tickets left]
-            open_list.append([init[i], h, -1, 0, -1, tickets])
+            open_list.append([init[i], graph[init[i]][-1], -1, 0, -1, tickets])
 
             while len(open_list) > 0:
                 new_tickets = tickets
@@ -288,14 +322,14 @@ class SearchProblem:
                     return returned_list
 
                 #Check nodes children, add them to the open_list
-                for child in self.model[current[0]] :
+                for child in graph[current[0]] :
+                    if isinstance(child, int):
+                        continue
 
                     if inList(child[1], closed_list):
                         continue
 
-                    h = function_h(child[1], i)
-
-                    open_list.append([child[1], h, current[0], current[3] + 1, child[0], new_tickets])
+                    open_list.append([child[1], graph[child[1]][-1], current[0], current[3] + 1, child[0], new_tickets])
 
     #######################################################################################################################################################
 
@@ -310,7 +344,9 @@ class SearchProblem:
         init_length = len(init)
         for i in range(0, init_length, 1):
             #calculating each path according to the positions in awnser_aux
-            answer_i_list = A_star(self = self, init = init, tickets = tickets, i = i, answer_aux = answer_aux)
+            aux = my_copy(self.model)
+            new_graph = BFS(i, init, aux)
+            answer_i_list = A_star(self = self, init = init, tickets = tickets, i = i, answer_aux = answer_aux, graph = new_graph)
             #update ticket list
             tickets = answer_i_list[1]
             #adding the path to the answer

@@ -170,12 +170,12 @@ else:
 # CUSTOM TESTS
 
 print("\n ENTERING CUSTOM TESTS...")
-'''
+
 print("\n(4 val) Exercise 4 - Three agents, Limits (test 1)")
 print("Init [2,10,70] Goal [113, 110, 2]")
-SP = SearchProblem(goal = [2, 113, 110], model = U, auxheur=coords)
+SP = SearchProblem(goal = [113, 110, 2], model = U, auxheur=coords)
 tinit = time.process_time()
-I = [70, 2, 10]
+I = [2, 10, 70]
 nn = SP.search(I,limitexp = 3000, limitdepth = 10, tickets = [15, 10, 8])
 tend = time.process_time()
 print("%.1fms"%((tend-tinit)*1000))
@@ -186,7 +186,7 @@ if validatepath(nn,I,U, tickets = [15, 10, 8]):
 else:
         print("invalid path")
 
-        '''
+
 
 print("\n(4 val) Exercise 5 - Three agents, Limits, Any-Order (test 1)")
 print("Init [2, 10, 70] Goal [113, 110, 2]")
