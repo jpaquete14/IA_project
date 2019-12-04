@@ -1,11 +1,8 @@
 import random
-import numpy as np
 
-#Globa Variables for Q table calculation
 alpha = 0.5
 gamma = 0.9
-epsilon = 0.5
-
+epsilon = 0.3
 def index_max(self, lst, st):
     max = float("-inf")
     index_max = 0
