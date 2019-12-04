@@ -1,7 +1,4 @@
 import random
-import numpy as np
-
-
 
 # LearningAgent to implement
 # no knowledeg about the environment can be used
