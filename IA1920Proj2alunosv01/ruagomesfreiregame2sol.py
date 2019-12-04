@@ -1,10 +1,7 @@
 import random
 import numpy as np
 
-#Globa Variables for Q table calculation
-alpha = 0.1
-gamma = 0.5
-epsilon = 0.5
+
 
 # LearningAgent to implement
 # no knowledeg about the environment can be used
@@ -25,6 +22,11 @@ class LearningAgent:
                         #list for each state that contains the possible actions
                         self.q_table.append([]) 
                 #######################
+
+                #Variables for Q value calculation
+                self.alpha = 0.5     #learning rate
+                self.gamma = 0.6     #value of future reward
+                self.epsilon = 0.3 
         
 
         # Select one action, used when learning  
@@ -54,7 +56,7 @@ class LearningAgent:
 
 
                 a = 0
-                if random.uniform(0, 1) < epsilon:      # Exploration
+                if random.uniform(0, 1) < self.epsilon:      # Exploration
                         a = random.randint(0, len(aa) - 1) 
 
                 else:   # Exploitation
@@ -82,7 +84,7 @@ class LearningAgent:
                  #action list initialization (Dont know if needed)
                 if not self.q_table[st]:       
                         for i in range (0, len(aa)):
-                                q_table[st].append(0)
+                                self.q_table[st].append(0)
 
                 a = index_max(aa)
 
@@ -97,11 +99,10 @@ class LearningAgent:
         # r - reward obtained
         def learn(self,ost,nst,a,r):
                 #print("learn something from this data")
-
                 old_q = self.q_table[ost][a]
                 next_max = max(self.q_table[nst] or [0]) #Prevents empty list case
         
-                new_q = (1 - alpha) * old_q + alpha * (r + gamma * next_max)
+                new_q = (1 - self.alpha) * old_q + self.alpha * (r + self.gamma * next_max)
                 self.q_table[ost][a] = new_q
                 
                 return
