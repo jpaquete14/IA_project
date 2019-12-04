@@ -1,7 +1,7 @@
 import pickle
 import random
 import matplotlib.pyplot as plt
-from ruagomesfreiregame2sol import *
+from A016 import *
 
 def runagent(A, T, R, I = 1, learningphase=True, nlearn = 1000, ntest = 100):
 
@@ -10,7 +10,7 @@ def runagent(A, T, R, I = 1, learningphase=True, nlearn = 1000, ntest = 100):
                 n = nlearn
         else:
                 n = ntest
-                
+
         st = I
         for ii in range(1,n):
                 aa = T[st][0]
@@ -31,13 +31,13 @@ def runagent(A, T, R, I = 1, learningphase=True, nlearn = 1000, ntest = 100):
                 else:
                         #print(st,nst,a,r)
                         pass
-                
+
                 st = nst
 
                 if not ii%15:
                         st = I
         return J/n
-        
+
 
 # due to the randomness in the learning process, we will run everythin NREP times
 # the final grades is based on the average on all of them
@@ -45,9 +45,9 @@ def runagent(A, T, R, I = 1, learningphase=True, nlearn = 1000, ntest = 100):
 NREP = 5
 val = [0,0,0,0]
 print("exemplo 1")
-for nrep in range(0,NREP):       
+for nrep in range(0,NREP):
         A = LearningAgent(114,15)
-        # your solution will be tested with other environments    
+        # your solution will be tested with other environments
         with open("mapasgraph2.pickle", "rb") as fp:   #Unpickling
             AA = pickle.load(fp)
 
@@ -80,7 +80,7 @@ for nrep in range(0,NREP):
 
 print("exemplo 2")
 for nrep in range(0,NREP):
-        
+
         A = LearningAgent(114,15)
 
         T = AA[0]
@@ -105,7 +105,7 @@ for nrep in range(0,NREP):
         print("# testing phase")
         Jn = runagent(A, T, R, I = 1, learningphase=False, ntest = 10)
         val[3] += Jn
-        print("average reward",Jn)        
+        print("average reward",Jn)
 
 
 val = list([ii/NREP for ii in val])
@@ -118,4 +118,4 @@ grade = 0
 for correct,mark in zip(cor,[3,7,3,7]):
         if correct:
                 grade += mark
-print("Grade in these tests (the final will also include hidden tests) : ", grade)        
+print("Grade in these tests (the final will also include hidden tests) : ", grade)
