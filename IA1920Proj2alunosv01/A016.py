@@ -1,6 +1,4 @@
-#Joao Paquete - 89477
-#Tomas Inacio - 89553
-#Grupo 16
+#Joao Paquete - 89477 || Tomas Inacio - 89553 || Grupo 16
 
 import random
 
