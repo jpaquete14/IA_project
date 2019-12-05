@@ -8,10 +8,21 @@ def index_max(self, lst, st):
     for el in self.q_table[st]:
         #check highest q value
         for i in range (0, len(lst)):
-            if self.q_table[st][i] > max:
-                max = self.q_table[st][i]
+            if self.q_table[st][i][0] > max:
+                max = self.q_table[st][i][0]
                 index_max = i
     return index_max
+
+def index_min(self, lst, st):
+    min = float("+inf")
+    index_min = 0
+    for el in self.q_table[st]:
+        #check highest q value
+        for i in range (0, len(lst)):
+            if self.q_table[st][i][1] < min:
+                min = self.q_table[st][i][1]
+                index_min = i
+    return index_min
 
 class LearningAgent:
 
@@ -20,10 +31,10 @@ class LearningAgent:
             self.nA = nA
             self.alpha = 0.5
             self.gamma = 0.9
-            self.epsilon = 0.3
+            self.epsilon = 0.5
             #Q_TABLE inicialization
             self.q_table = []
-            for i in range (0, nS):
+            for i in range (0, nS + 1):
                 #list for each state that contains the possible actions
                 self.q_table.append([])
 
@@ -31,11 +42,11 @@ class LearningAgent:
             #action list initialization
             if not self.q_table[st]:
                 for i in range (0, len(aa)):
-                    self.q_table[st].append(0)
+                    self.q_table[st].append([int(0), int(0)])
 
-            a = 0
             if random.uniform(0, 1) < self.epsilon:      # Exploration
-                a = random.randint(0, len(aa) - 1)
+                a = index_min(self, aa, st)
+                self.q_table[st][a][1] += 1
             else:                                   # Exploitation
                 a = index_max(self, aa, st)
 
@@ -55,10 +66,13 @@ class LearningAgent:
 
         def learn(self,ost,nst,a,r):
 
-            old_q = self.q_table[ost][a]
+            old_q = self.q_table[ost][a][0]
             next_max = max(self.q_table[nst] or [0]) #Prevents empty list case
 
-            new_q = (1 - self.alpha) * old_q + self.alpha * (r + self.gamma * next_max)
-            self.q_table[ost][a] = new_q
+            if next_max == 0:
+                next_max = [next_max]
+
+            new_q = (1 - self.alpha) * old_q + self.alpha * (r + self.gamma * next_max[0])
+            self.q_table[ost][a][0] = new_q
 
             return
