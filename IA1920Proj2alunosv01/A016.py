@@ -42,13 +42,20 @@ class LearningAgent:
             #action list initialization
             if not self.q_table[st]:
                 for i in range (0, len(aa)):
-                    self.q_table[st].append([int(0), int(0)])
+                    self.q_table[st].append([0, 0])
 
             if random.uniform(0, 1) < self.epsilon:      # Exploration
-                a = index_min(self, aa, st)
+                try:
+                    a = index_min(self, aa, st)
+                except:
+                    a = random.randint(0, len(aa) - 1)  #just to avoid an unexpected stoppage of the program
+
                 self.q_table[st][a][1] += 1
             else:                                   # Exploitation
-                a = index_max(self, aa, st)
+                try:
+                    a = index_max(self, aa, st)
+                except:
+                    a = random.randint(0, len(aa) - 1)  #just to avoid an unexpected stoppage of the program
 
             return a
 
@@ -58,8 +65,10 @@ class LearningAgent:
             if not self.q_table[st]:
                 for i in range (0, len(aa)):
                     self.q_table[st].append(0)
-
-            a = index_max(self, aa, st)
+            try:
+                a = index_max(self, aa, st)
+            except:
+                a = random.randint(0, len(aa) - 1) #just to avoid an unexpected stoppage of the program
 
             return a
 
